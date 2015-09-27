@@ -8,7 +8,10 @@
 
 package main
 
-import "go/ast"
+import (
+	"fmt"
+	"go/ast"
+)
 
 // Entity represents a struct with the @Entity annotation
 type Entity struct {
@@ -20,11 +23,17 @@ type Entity struct {
 	TableName string
 }
 
+// NewEntity creates an entity with the default TableName being the entity's name
 func NewEntity(ts *ast.TypeSpec) *Entity {
 	return &Entity{
 		TypeSpec:  ts,
 		TableName: ts.Name.Name,
 	}
+}
+
+// String ...
+func (e Entity) String() string {
+	return fmt.Sprintf("Entity[%s], table[%s]", e.TypeSpec.Name.Name, e.TableName)
 }
 
 // Field represents a column of an entity
@@ -38,6 +47,7 @@ type Field struct {
 	Relation *Relation // Relation object, if any
 }
 
+// NewField creates a field with the default ColumnName being the field's name
 func NewField(f *ast.Field) *Field {
 	return &Field{
 		Field:      f,
@@ -45,25 +55,7 @@ func NewField(f *ast.Field) *Field {
 	}
 }
 
-// AssociationType list all the association type handled by Dago
-type AssociationType uint8
-
-const (
-	OneToOne RelationType = iota
-	OneToMany
-	ManyToOne
-	ManyToMany
-)
-
-// RelationType specifies the type of the relation (uni/bi directionnal)
-type RelationType uint8
-
-const (
-	Unidirectionnal RelationType = iota
-	Bidirectionnal
-)
-
-type Relation struct {
-	Association AssociationType
-	Type        RelationType
+// String ...
+func (e Field) String() string {
+	return fmt.Sprintf("Field[%s], column[%s]", e.Field.Names[0].Name, e.ColumnName)
 }

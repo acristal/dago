@@ -91,7 +91,7 @@ func (g *Generator) parse(fs *token.FileSet, f *ast.File) {
 			if entity.Annotations.AnyOf(&annotations.Entity{}) == false {
 				continue
 			}
-			glog.Infof("Found entity: %v with %d annotations", entity.TableName, len(entity.Annotations))
+			glog.Infof("%v: %d annotations", entity, len(entity.Annotations))
 			for _, field := range structType.Fields.List {
 				if field.Names == nil {
 					continue
@@ -106,7 +106,7 @@ func (g *Generator) parse(fs *token.FileSet, f *ast.File) {
 					}
 				}
 				entity.Fields = append(entity.Fields, entityField)
-				glog.Infof("Found field %v with %d annotations", entityField.ColumnName, len(entityField.Annotations))
+				glog.Infof("%v: %d annotations", entityField, len(entityField.Annotations))
 			}
 			g.Entities = append(g.Entities, entity)
 		}
