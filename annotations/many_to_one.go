@@ -46,3 +46,11 @@ func (a *ManyToOne) Parse(value string) error {
 	}
 	return nil
 }
+
+// Validate ...
+func (a *ManyToOne) Validate() error {
+	if a.JoinColumn == "" {
+		return NewMissingRequiredParameterError("@ManyToOne:joinColumn")
+	}
+	return nil
+}

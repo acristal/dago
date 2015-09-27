@@ -24,3 +24,7 @@ func NewInvalidParameterError(parameterName string) error {
 func NewParameterArgumentRequiredError(parameterName string) error {
 	return fmt.Errorf("AnnotationError: Parameter [%v] requires an argument", strings.TrimSpace(parameterName))
 }
+
+func NewMissingRequiredParameterError(parameterName string) error {
+	return fmt.Errorf("AnnotationError: Parameter [%v] is required", strings.TrimSpace(parameterName))
+}

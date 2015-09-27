@@ -21,3 +21,8 @@ func (a *ID) IsValidFor(dest Type) bool {
 func (a *ID) Parse(value string) error {
 	return nil
 }
+
+// Validate ...
+func (a *ID) Validate() error {
+	return nil
+}

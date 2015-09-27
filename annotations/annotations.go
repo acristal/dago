@@ -30,6 +30,7 @@ const (
 // Annotation ...
 type Annotation interface {
 	Parse(string) error
+	Validate() error
 	IsValidFor(Type) bool
 }
 
@@ -84,7 +85,10 @@ func Parse(comments *ast.CommentGroup, annType Type) (annotations []Annotation) 
 			continue
 		}
 		if err := annotation.Parse(matches[3]); err != nil {
-			glog.Warningf("Error while parsing annotation: %v", err)
+			glog.Warningf("Error while parsing annotation [%v]: %v", matches[1], err)
+			continue
+		} else if err := annotation.Validate(); err != nil {
+			glog.Warningf("Annotation [%v] is not valid: %v", matches[1], err)
 			continue
 		}
 		annotations = append(annotations, annotation)

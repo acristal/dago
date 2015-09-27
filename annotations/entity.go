@@ -21,3 +21,8 @@ func (a *Entity) IsValidFor(dest Type) bool {
 func (a *Entity) Parse(value string) error {
 	return nil
 }
+
+// Validate ...
+func (a *Entity) Validate() error {
+	return nil
+}

@@ -37,3 +37,11 @@ func (a *OneToMany) Parse(value string) error {
 	}
 	return nil
 }
+
+// Validate ...
+func (a *OneToMany) Validate() error {
+	if a.MappedBy == "" {
+		return NewMissingRequiredParameterError("@OneToMany:mappedBy")
+	}
+	return nil
+}

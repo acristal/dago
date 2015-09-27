@@ -37,3 +37,11 @@ func (a *OrderBy) Parse(value string) error {
 	}
 	return nil
 }
+
+// Validate ...
+func (a *OrderBy) Validate() error {
+	if a.Clause == "" {
+		return NewMissingRequiredParameterError("@OrderBy:clause")
+	}
+	return nil
+}

@@ -21,3 +21,8 @@ func (a *Transient) IsValidFor(dest Type) bool {
 func (a *Transient) Parse(value string) error {
 	return nil
 }
+
+// Validate ...
+func (a *Transient) Validate() error {
+	return nil
+}

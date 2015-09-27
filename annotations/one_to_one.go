@@ -35,14 +35,8 @@ func (a *OneToOne) Parse(value string) error {
 		}
 		switch strings.TrimSpace(kvp[0]) {
 		case "mappedBy":
-			if a.Inverse != "" {
-				return NewError("Cannot have mappedBy and inverse set at the same time.")
-			}
 			a.MappedBy = strings.TrimSpace(kvp[1])
 		case "inverse":
-			if a.MappedBy != "" {
-				return NewError("Cannot have mappedBy and inverse set at the same time.")
-			}
 			a.Inverse = strings.TrimSpace(kvp[1])
 		case "optional":
 			var err error
@@ -52,6 +46,16 @@ func (a *OneToOne) Parse(value string) error {
 		default:
 			return NewInvalidParameterError(kvp[0])
 		}
+	}
+	return nil
+}
+
+// Validate ...
+func (a *OneToOne) Validate() error {
+	if a.MappedBy != "" && a.Inverse != "" {
+		return NewError("Cannot have mappedBy and inverse set at the same time.")
+	} else if a.MappedBy == "" && a.Inverse == "" {
+		return NewMissingRequiredParameterError("@OneToOne:mappedBy || @OneToOne:inverse")
 	}
 	return nil
 }

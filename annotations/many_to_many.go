@@ -43,3 +43,15 @@ func (a *ManyToMany) Parse(value string) error {
 	}
 	return nil
 }
+
+// Validate ...
+func (a *ManyToMany) Validate() error {
+	if a.JoinTable == "" {
+		return NewMissingRequiredParameterError("@ManyToMany:joinTable")
+	} else if a.JoinColumn == "" {
+		return NewMissingRequiredParameterError("@ManyToMany:joinColumn")
+	} else if a.InverseJoinColumn == "" {
+		return NewMissingRequiredParameterError("@ManyToMany:inverseJoinColumn")
+	}
+	return nil
+}

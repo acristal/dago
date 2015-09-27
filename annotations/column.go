@@ -37,3 +37,11 @@ func (a *Column) Parse(value string) error {
 	}
 	return nil
 }
+
+// Validate ...
+func (a *Column) Validate() error {
+	if a.Name == "" {
+		return NewMissingRequiredParameterError("name")
+	}
+	return nil
+}
