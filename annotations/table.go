@@ -8,6 +8,8 @@
 
 package annotations
 
+import "strings"
+
 // Table ...
 type Table struct {
 	Name string
@@ -20,5 +22,18 @@ func (a *Table) IsValidFor(dest Type) bool {
 
 // Parse ...
 func (a *Table) Parse(value string) error {
+	params := strings.Split(value, ",")
+	for _, param := range params {
+		kvp := strings.SplitN(param, "=", 2)
+		if len(kvp) != 2 {
+			return NewParameterArgumentRequiredError(kvp[0])
+		}
+		switch strings.TrimSpace(kvp[0]) {
+		case "name":
+			a.Name = strings.TrimSpace(kvp[1])
+		default:
+			return NewInvalidParameterError(kvp[0])
+		}
+	}
 	return nil
 }

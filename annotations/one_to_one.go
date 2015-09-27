@@ -8,8 +8,16 @@
 
 package annotations
 
+import (
+	"strconv"
+	"strings"
+)
+
 // OneToOne ...
 type OneToOne struct {
+	Inverse  string
+	MappedBy string
+	Optional bool
 }
 
 // IsValidFor ...
@@ -19,5 +27,31 @@ func (a *OneToOne) IsValidFor(dest Type) bool {
 
 // Parse ...
 func (a *OneToOne) Parse(value string) error {
+	params := strings.Split(value, ",")
+	for _, param := range params {
+		kvp := strings.SplitN(param, "=", 2)
+		if len(kvp) != 2 {
+			return NewParameterArgumentRequiredError(kvp[0])
+		}
+		switch strings.TrimSpace(kvp[0]) {
+		case "mappedBy":
+			if a.Inverse != "" {
+				return NewError("Cannot have mappedBy and inverse set at the same time.")
+			}
+			a.MappedBy = strings.TrimSpace(kvp[1])
+		case "inverse":
+			if a.MappedBy != "" {
+				return NewError("Cannot have mappedBy and inverse set at the same time.")
+			}
+			a.Inverse = strings.TrimSpace(kvp[1])
+		case "optional":
+			var err error
+			if a.Optional, err = strconv.ParseBool(strings.TrimSpace(kvp[1])); err != nil {
+				return err
+			}
+		default:
+			return NewInvalidParameterError(kvp[0])
+		}
+	}
 	return nil
 }

@@ -11,18 +11,18 @@ package database
 //go:generate dago $GOFILE
 
 // @Entity
-// @Table(name='persons')
+// @Table(name = persons)
 // @Id
 type Person struct {
 	// @Id
-	// @Column(name='id')
+	// @Column(name = id)
 	ID uint
 
 	Name string
 	// @Transient
 	Age uint16
 
-	// @OneToOne(mappedBy='Person')
+	// @OneToOne(mappedBy = Person)
 	Address *Address
 }
 
@@ -33,11 +33,11 @@ type Address struct {
 
 	Street string
 
-	// @OneToOne(inverse='Address')
+	// @OneToOne(inverse = Address)
 	Person *Person
 }
 
 // This struct is not an entity, because it has no @Entity annotation in the comments
-// @Table(name='titi')
+// @Table(name = titi)
 type NotAnEntity struct {
 }

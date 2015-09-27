@@ -8,8 +8,11 @@
 
 package annotations
 
+import "strings"
+
 // OneToMany ...
 type OneToMany struct {
+	MappedBy string
 }
 
 // IsValidFor ...
@@ -19,5 +22,18 @@ func (a *OneToMany) IsValidFor(dest Type) bool {
 
 // Parse ...
 func (a *OneToMany) Parse(value string) error {
+	params := strings.Split(value, ",")
+	for _, param := range params {
+		kvp := strings.SplitN(param, "=", 2)
+		if len(kvp) != 2 {
+			return NewParameterArgumentRequiredError(kvp[0])
+		}
+		switch strings.TrimSpace(kvp[0]) {
+		case "mappedBy":
+			a.MappedBy = strings.TrimSpace(kvp[1])
+		default:
+			return NewInvalidParameterError(kvp[0])
+		}
+	}
 	return nil
 }

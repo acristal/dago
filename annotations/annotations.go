@@ -15,7 +15,7 @@ import (
 	"github.com/golang/glog"
 )
 
-var annotationRegexp = regexp.MustCompile(`\/\/\s*@(\w+)(\(((\s*\w+\s*(=\s*.+?)?)(\s*,\s*\w+\s*(=\s*.+?)?)*)\))?`)
+var annotationRegexp = regexp.MustCompile(`\/\/\s*@(\w+)(\(((\s*\w+\s*=\s*\w+\s*)(\s*,\s*\w+\s*=\s*.+)*)\))?`)
 
 // Type ...
 type Type uint8
@@ -84,7 +84,7 @@ func Parse(comments *ast.CommentGroup, annType Type) (annotations []Annotation) 
 			continue
 		}
 		if err := annotation.Parse(matches[3]); err != nil {
-			// glog.Warningf("Error while parsing annotation: %v", err)
+			glog.Warningf("Error while parsing annotation: %v", err)
 			continue
 		}
 		annotations = append(annotations, annotation)
