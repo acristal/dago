@@ -1,0 +1,3 @@
+- Existence checking on MappedBy fields: A mappedBy to an invalid/non-existent field should result in an error. Example:
+  // @ManyToMany(mappedBy=NonExistent)
+  ==> NonExistent is not a valid field

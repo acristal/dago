@@ -46,6 +46,9 @@ func processFile(file string) {
 	}
 
 	g.parse(fset, f)
+	if err := g.eval(); err != nil {
+		glog.Fatalf("Failed to eval entities: %v", err)
+	}
 	src := g.format()
 
 	outputName := fmt.Sprintf("%s_dago.go", strings.TrimSuffix(file, filepath.Ext(file)))
@@ -75,7 +78,7 @@ func (g *Generator) parse(fs *token.FileSet, f *ast.File) {
 			continue
 		}
 		for _, spec := range genDecl.Specs {
-			// We look for the structs
+			// We only care about Structures
 			typeSpec, ok := spec.(*ast.TypeSpec)
 			if !ok {
 				continue
@@ -84,19 +87,18 @@ func (g *Generator) parse(fs *token.FileSet, f *ast.File) {
 			if !ok {
 				continue
 			}
-			entity := NewEntity(typeSpec)
-			// glog.Infof("Found struct %v", entity.TableName)
+			entity := g.NewEntity(typeSpec)
 			entity.Annotations = annotations.Parse(genDecl.Doc, annotations.TypeStruct)
 			// glog.Infof("Found %d annotations", len(entity.Annotations))
 			if entity.Annotations.AnyOf(&annotations.Entity{}) == false {
 				continue
 			}
-			glog.Infof("%v: %d annotations", entity, len(entity.Annotations))
+			glog.V(2).Infof("%v: %d annotations", entity, len(entity.Annotations))
 			for _, field := range structType.Fields.List {
 				if field.Names == nil {
 					continue
 				}
-				entityField := NewField(field)
+				entityField := entity.NewField(field)
 				if field.Doc != nil {
 					// glog.Infof("Found comment [%v] for field %v", field.Doc.Text(), field.Names[0].Name)
 					entityField.Annotations = annotations.Parse(field.Doc, annotations.TypeField)
@@ -106,11 +108,23 @@ func (g *Generator) parse(fs *token.FileSet, f *ast.File) {
 					}
 				}
 				entity.Fields = append(entity.Fields, entityField)
-				glog.Infof("%v: %d annotations", entityField, len(entityField.Annotations))
+				glog.V(2).Infof("%v: %d annotations", entityField, len(entityField.Annotations))
 			}
 			g.Entities = append(g.Entities, entity)
 		}
 	}
+}
+
+func (g *Generator) eval() error {
+	for _, entity := range g.Entities {
+		if err := entity.EvalAnnotations(); err != nil {
+			return err
+		}
+		if err := entity.ValidateTypes(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // format returns the gofmt-ed contents of the Generator's buffer.

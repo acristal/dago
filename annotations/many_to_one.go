@@ -19,6 +19,14 @@ type ManyToOne struct {
 	Optional   bool
 }
 
+func (a *ManyToOne) BuildRelation() *Relation {
+	return &Relation{
+		Contract:  a,
+		Type:      ManyToOneRelation,
+		Direction: Unidirectional,
+	}
+}
+
 // IsValidFor ...
 func (a *ManyToOne) IsValidFor(dest Type) bool {
 	return dest == TypeField

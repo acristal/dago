@@ -15,6 +15,15 @@ type ManyToMany struct {
 	JoinTable         string
 	JoinColumn        string
 	InverseJoinColumn string
+	MappedBy          string
+}
+
+func (a *ManyToMany) BuildRelation() *Relation {
+	return &Relation{
+		Contract:  a,
+		Type:      ManyToManyRelation,
+		Direction: Unidirectional,
+	}
 }
 
 // IsValidFor ...
@@ -37,6 +46,8 @@ func (a *ManyToMany) Parse(value string) error {
 			a.JoinColumn = strings.TrimSpace(kvp[1])
 		case "inverseJoinColumn":
 			a.InverseJoinColumn = strings.TrimSpace(kvp[1])
+		case "mappedBy":
+			a.MappedBy = strings.TrimSpace(kvp[1])
 		default:
 			return NewInvalidParameterError(kvp[0])
 		}
@@ -46,12 +57,17 @@ func (a *ManyToMany) Parse(value string) error {
 
 // Validate ...
 func (a *ManyToMany) Validate() error {
-	if a.JoinTable == "" {
-		return NewMissingRequiredParameterError("@ManyToMany:joinTable")
-	} else if a.JoinColumn == "" {
-		return NewMissingRequiredParameterError("@ManyToMany:joinColumn")
-	} else if a.InverseJoinColumn == "" {
-		return NewMissingRequiredParameterError("@ManyToMany:inverseJoinColumn")
+	if a.MappedBy != "" && a.JoinTable != "" {
+		return NewError("Cannot have mappedBy and joinTable set at the same time.")
+	} else if a.MappedBy == "" && a.JoinTable == "" {
+		return NewMissingRequiredParameterError("@ManyToMany:mappedBy || @ManyToMany:joinTable")
+	}
+	if a.JoinTable != "" {
+		if a.JoinColumn == "" {
+			return NewMissingRequiredParameterError("@ManyToMany:joinColumn")
+		} else if a.InverseJoinColumn == "" {
+			return NewMissingRequiredParameterError("@ManyToMany:inverseJoinColumn")
+		}
 	}
 	return nil
 }

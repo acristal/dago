@@ -15,6 +15,15 @@ type OneToMany struct {
 	MappedBy string
 }
 
+func (a *OneToMany) BuildRelation() *Relation {
+	return &Relation{
+		Contract: a,
+		Type:     OneToManyRelation,
+		// OneToMany is Bidirectional by nature: MappedBy is the destination field
+		Direction: Bidirectional,
+	}
+}
+
 // IsValidFor ...
 func (a *OneToMany) IsValidFor(dest Type) bool {
 	return dest == TypeField

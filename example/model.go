@@ -24,6 +24,14 @@ type Person struct {
 
 	// @OneToOne(mappedBy = Person)
 	Address *Address
+
+	// @ManyToMany(joinTable = person_phones, joinColumn = person_id, inverseJoinColumn = phone_id)
+	Phones []*Phone
+
+	// @OneToMany(mappedBy=Parent)
+	Children []*Person
+	// @ManyToOne(joinColumn = parent_id)
+	Parent *Person
 }
 
 // @Entity
@@ -35,6 +43,18 @@ type Address struct {
 
 	// @OneToOne(inverse = Address)
 	Person *Person
+}
+
+// @Entity
+type Phone struct {
+	// @Id
+	ID uint
+
+	Number string
+
+	// I know, this makes no sense
+	// @ManyToMany(mappedBy=Phones)
+	Persons []*Person
 }
 
 // This struct is not an entity, because it has no @Entity annotation in the comments

@@ -20,6 +20,14 @@ type OneToOne struct {
 	Optional bool
 }
 
+func (a *OneToOne) BuildRelation() *Relation {
+	return &Relation{
+		Contract:  a,
+		Type:      OneToOneRelation,
+		Direction: Unidirectional,
+	}
+}
+
 // IsValidFor ...
 func (a *OneToOne) IsValidFor(dest Type) bool {
 	return dest == TypeField
