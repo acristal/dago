@@ -1,3 +1,4 @@
 - Existence checking on MappedBy fields: A mappedBy to an invalid/non-existent field should result in an error. Example:
   // @ManyToMany(mappedBy=NonExistent)
   ==> NonExistent is not a valid field
+- Allow ID to be something else than uint (CompositeID/other types)
